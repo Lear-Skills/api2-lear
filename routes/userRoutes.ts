@@ -1,7 +1,9 @@
 import express from 'express';
+import User from '../models/UserModel';
 const router = express.Router();
 const UserController = require('../controllers/UserController')
 
-router.get('/' , UserController.showHome);
 
-router.get('/login' , UserController.userLogin)
+router.post('/login' , UserController.userLogin)
+
+router.post('/register' , UserController.userRegister)
