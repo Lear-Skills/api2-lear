@@ -16,7 +16,7 @@ function createUserToken(User, req, res) {
         // payload data
         {
             name: User.name,
-            id: User.userId,
+            id: User.user_Id,
         }, "nossosecret" // para deixar o token único - usar strings únicas
         );
         // return token
@@ -24,7 +24,7 @@ function createUserToken(User, req, res) {
             res.status(200).json({
                 message: "Você está autenticado!",
                 token: token,
-                userId: User.userId,
+                userId: User.user_Id,
             });
         }
         catch (e) {

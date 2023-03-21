@@ -1,20 +1,19 @@
 //===================== IMPORTS ====================================//
 import express from "express"                                     //
-import { Router, Request, Response } from "express";                //                        
+import { Request, Response } from "express";                //                        
 //==================================================================//
 //========================== Instanciar ============================//
 const app = express();                                              //
-const route = Router()    
 const port = 3333                                          //
 //==================================================================//
 //======================= Express Config ===========================//
 app.use(express.json())                                             //                                                                //
 //==================================================================//
 const userRoutes = require('./routes/userRoutes')
-//======================== APP Routes ==============================//
-app.use(route)                                                      //
+//======================== APP Routes ==============================//                                                   //
 app.use('/user' , userRoutes)                                       //
 //==================================================================//
+const UserModel = require('./models/UserModel')
 //==================== DB & Routes Start Script=====================//
 const conn = require('./db/conn');
 //==================================================================//

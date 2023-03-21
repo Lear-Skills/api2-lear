@@ -16,8 +16,9 @@ const criptopass_1 = __importDefault(require("../auth/criptopass"));
 const validationsLogin_1 = __importDefault(require("../validations/validationsLogin"));
 const createUserTokenTS_1 = __importDefault(require("../helpers/createUserTokenTS"));
 const UserModel_1 = __importDefault(require("../models/UserModel"));
+const UserModelTS_1 = require("../models/UserModelTS");
 const saltLenght = 128;
-module.exports = class UserController {
+class UserController {
     //=========== Controller para Logar Usuário ===============================================//
     static userLogin(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -40,18 +41,29 @@ module.exports = class UserController {
             const SHAname = criptopass_1.default.sha256(name);
             const salt = criptopass_1.default.new_salt(saltLenght);
             const databasePassword = criptopass_1.default.sha256(password + salt);
-            const userId = "id";
+            const userId = criptopass_1.default.newUserId();
             // create user
             //PAREI AQUI
-            const usercreated = new UserModel_1.default(SHAname, SHAemail, userId, databasePassword, salt);
+            //const usercreated = new UserClass(SHAname , SHAemail ,userId ,databasePassword, salt )
+            const userCreated = {
+                name: SHAname,
+                email: SHAemail,
+                user_Id: userId,
+                phone: SHAphone,
+                salt: salt,
+                password: databasePassword,
+            };
+            const createdClassUser = new UserModel_1.default(SHAname, SHAemail, userId, databasePassword, salt);
             try {
-                //const newUser = await user.save()
-                yield (0, createUserTokenTS_1.default)(usercreated, req, res);
-                res.status(200).json({ message: "deu bom", usercreated });
+                const newUser = yield UserModelTS_1.UserModel.create(userCreated);
+                res.send({ newUser });
+                yield (0, createUserTokenTS_1.default)(createdClassUser, req, res);
+                res.status(200).json({ message: "deu bom", userCreated });
             }
             catch (error) {
                 res.status(500).json({ message: error });
             }
         });
     }
-};
+}
+exports.default = UserController;

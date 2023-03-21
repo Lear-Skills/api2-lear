@@ -3,8 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
-const router = express_1.default.Router();
-const UserController = require('../controllers/UserController');
-router.post('/login', UserController.userLogin);
-router.post('/register', UserController.userRegister);
+//import User from '../models/UserModel';
+const router = require('express').Router();
+const UserController_1 = __importDefault(require("../controllers/UserController"));
+//router.post('/login' , UserController.userLogin)
+router.post('/register', UserController_1.default.userRegister);
+module.exports = router;

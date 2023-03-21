@@ -2,14 +2,9 @@
 const Sequelize = require('sequelize');
 require('dotenv').config();
 // Create a new Sequelize instance
-const sequelize = new Sequelize('dbTS', 'postgre', 'gui167', {
-    dialect: 'postgres',
-    dialectOptions: {
-        ssl: {
-            require: true,
-            rejectUnauthorized: false
-        }
-    }
+const sequelize = new Sequelize('apiTSdb', 'gui', 'guigui167', {
+    host: 'localhost',
+    dialect: 'mysql'
 });
 // Synchronize the model with the database
 sequelize.sync()

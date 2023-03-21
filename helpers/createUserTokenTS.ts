@@ -7,7 +7,7 @@ export default async function  createUserToken( User: User, req : Request, res :
     // payload data
     {
       name: User.name,
-      id: User.userId,
+      id: User.user_Id,
     },
     "nossosecret" // para deixar o token único - usar strings únicas
   );
@@ -17,7 +17,7 @@ export default async function  createUserToken( User: User, req : Request, res :
     res.status(200).json({
         message: "Você está autenticado!",
         token: token,
-        userId: User.userId,
+        userId: User.user_Id,
       });
   }catch(e){
     console.log(e)
