@@ -8,4 +8,5 @@ const router = require('express').Router();
 const UserController_1 = __importDefault(require("../controllers/UserController"));
 //router.post('/login' , UserController.userLogin)
 router.post('/register', UserController_1.default.userRegister);
+router.post('/login', UserController_1.default.userLogin);
 module.exports = router;

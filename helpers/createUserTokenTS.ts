@@ -1,8 +1,8 @@
 const jwt = require("jsonwebtoken");
-import User  from "../models/UserModel"
+import {UserModel}  from "../models/UserModelTS"
 import { Request , Response } from 'express'
 
-export default async function  createUserToken( User: User, req : Request, res : Response) {
+const createUserToken = async ( User: typeof UserModel, req : Request, res : Response) => {
   const token = jwt.sign(
     // payload data
     {
@@ -23,3 +23,8 @@ export default async function  createUserToken( User: User, req : Request, res :
     console.log(e)
   }
 };
+
+
+
+
+export {createUserToken}

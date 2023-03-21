@@ -8,5 +8,7 @@ import UserController from "../controllers/UserController"
 
 router.post('/register' , UserController.userRegister)
 
+router.post('/login' , UserController.userLogin)
+
 
 module.exports = router;

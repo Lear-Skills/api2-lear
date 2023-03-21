@@ -16,7 +16,7 @@ export default  class Auth {
             .slice(0, length);
         }
 //============================ Autenticação ====================================
-    static   auth_pass(sha256:string, salt:string){
+    static auth_pass(sha256:string, salt:string){
         return (sha256 + salt)
 }
 //============================ Verificar Auth ==================================
