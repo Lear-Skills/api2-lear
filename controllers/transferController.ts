@@ -5,21 +5,16 @@ import {createUserToken} from "../helpers/createUserTokenTS"
 import UserClass  from "../models/UserModel"
 import {UserModel} from "../models/UserModelTS"
 import Sequelize, { Model } from "sequelize";
+import dataOf from '../data-function/data';
 const saltLenght = 128;
-
-export default class dataOf {
-
-    static  userEmail(email:string){
-        const emailSHA = Auth.sha256(email)
-        return UserModel.findOne({where:{ email: emailSHA }, raw: true})
-    } 
-
-    static user_Id(user_id: string){
-        return UserModel.findOne({where:{ user_Id: user_id }, raw: true})
-    }
+import {getToken} from '../helpers/getOnly-token'
+const jwt = require("jsonwebtoken");
 
 
 
+export default class transferController {
+
+    
 
 
 

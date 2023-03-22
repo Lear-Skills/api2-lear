@@ -28,8 +28,9 @@ class UserController {
                 res.status(422).json({ message: 'O e-mail/ senha é obrigatório!' });
                 return;
             }
+            const emailSHA1 = criptopass_1.default.sha256(email);
             // check if user exists
-            const user = yield UserModelTS_1.UserModel.findOne({ email: email });
+            const user = yield UserModelTS_1.UserModel.findOne({ where: { email: emailSHA1 } });
             if (!user) {
                 return res
                     .status(422)
@@ -38,9 +39,9 @@ class UserController {
             data_1.default.userEmail(email).then((AfuckingPromise) => {
                 const passwordDB = AfuckingPromise.password;
                 const saltdb = AfuckingPromise.salt;
-                const passwordConfirm = criptopass_1.default.sha256(saltdb + password);
+                const passwordConfirm = criptopass_1.default.sha256(password + saltdb);
                 if (passwordDB == passwordConfirm) {
-                    res.send({ message: "Usuário Logado" });
+                    (0, createUserTokenTS_1.createUserToken)(user, req, res);
                 }
                 else {
                     res.send({ message: "Deu errado!" });
@@ -58,16 +59,16 @@ class UserController {
                 const SHAname = name;
                 const salt = criptopass_1.default.new_salt(saltLenght);
                 const databasePassword = criptopass_1.default.sha256(password + salt);
-                const userId = criptopass_1.default.newUserId();
+                const user_Id = criptopass_1.default.newUserId();
                 const userCreated = {
                     name: SHAname,
                     email: SHAemail,
-                    user_Id: userId,
+                    user_Id: user_Id,
                     phone: SHAphone,
                     salt: salt,
                     password: databasePassword,
                 };
-                const createdClassUser = new UserModel_1.default(SHAname, SHAemail, userId, databasePassword, salt);
+                const createdClassUser = new UserModel_1.default(SHAname, SHAemail, user_Id, databasePassword, salt);
                 try {
                     const newUser = yield UserModelTS_1.UserModel.create(userCreated);
                     yield (0, createUserTokenTS_1.createUserToken)(createdClassUser, req, res);
@@ -83,9 +84,46 @@ class UserController {
             //================ Criptografia dos dados ===============//
         });
     }
+    //============================== UPDATE ===========================================//
     static userUpdate(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { name, email, phone, password, confirmpassword } = req.body;
+            const { name, email, phone, password } = req.body;
+            const emailSHA = criptopass_1.default.sha256(email);
+            const user = {
+                phone: phone,
+                name: name
+            };
+            data_1.default.userEmail(email).then((AfuckingPromise) => {
+                const passwordDB = AfuckingPromise.password;
+                const saltdb = AfuckingPromise.salt;
+                const passwordConfirm = criptopass_1.default.sha256(password + saltdb);
+                if (passwordDB == passwordConfirm) {
+                }
+                else {
+                    res.send({ message: "Deu errado!" });
+                }
+            });
+            try {
+                yield UserModelTS_1.UserModel.update(user, { where: { email: emailSHA } });
+                res.send({ message: "Usuário Atualizado" });
+            }
+            catch (e) {
+                console.log(e);
+                res.send({ message: "Não deu certo" });
+            }
+        });
+    }
+    //============================== DELETE ===========================================//
+    static userDelete(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { user_Id } = req.body;
+            try {
+                yield UserModelTS_1.UserModel.destroy({ where: { user_Id: user_Id } });
+            }
+            catch (e) {
+                console.log(e);
+                res.send({ message: "Operação Delete não deu certo" });
+            }
         });
     }
 }

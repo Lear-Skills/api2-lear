@@ -1,19 +1,15 @@
 import express from 'express';
-//import User from '../models/UserModel';
 const router = require('express').Router()
 import UserController from "../controllers/UserController"
-
-
 
 router.post('/register' , UserController.userRegister)
 
 router.post('/login' , UserController.userLogin)
 
-router.post('/update')
+router.post('/update' , UserController.userUpdate)
 
-router.post('/delete')
+router.post('/delete' , UserController.userDelete)
 
-router.post('/')
-
+router.post('/checkUser' , UserController.checkUser)
 
 module.exports = router;
