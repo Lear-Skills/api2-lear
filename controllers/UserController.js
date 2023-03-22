@@ -24,7 +24,6 @@ class UserController {
     static userLogin(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { email, password } = req.body;
-            const SHApass = criptopass_1.default.sha256(password);
             if (!email && !password) {
                 res.status(422).json({ message: 'O e-mail/ senha é obrigatório!' });
                 return;
@@ -39,7 +38,8 @@ class UserController {
             data_1.default.userEmail(email).then((AfuckingPromise) => {
                 const passwordDB = AfuckingPromise.password;
                 const saltdb = AfuckingPromise.salt;
-                if (passwordDB == criptopass_1.default.sha256(saltdb + password)) {
+                const passwordConfirm = criptopass_1.default.sha256(saltdb + password);
+                if (passwordDB == passwordConfirm) {
                     res.send({ message: "Usuário Logado" });
                 }
                 else {
@@ -81,6 +81,11 @@ class UserController {
                 console.log("b");
             }
             //================ Criptografia dos dados ===============//
+        });
+    }
+    static userUpdate(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { name, email, phone, password, confirmpassword } = req.body;
         });
     }
 }

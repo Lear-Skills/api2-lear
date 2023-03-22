@@ -20,7 +20,7 @@ export default  class Auth {
         return (sha256 + salt)
 }
 //============================ Verificar Auth ==================================
-    static   verify_auth(password:string, salt:string , auth_pass:string){
+    static verify_auth(password:string, salt:string , auth_pass:string){
         const password256 = Auth.sha256(password)
         if(password256+salt == auth_pass){
             return true;

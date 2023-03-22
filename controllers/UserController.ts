@@ -29,15 +29,15 @@ export default class UserController {
         }
         
           dataOf.userEmail(email).then((AfuckingPromise:any) => {
-          const passwordDB:string = AfuckingPromise.password 
-          const saltdb:string = AfuckingPromise.salt
-          const passwordConfirm:string = Auth.sha256(saltdb + password)
-
-          if( passwordDB == passwordConfirm){
-            res.send({message: "Usuário Logado"})
-          }else{
-            res.send({message: "Deu errado!"})
-          }
+            const passwordDB:string = AfuckingPromise.password 
+            const saltdb:string = AfuckingPromise.salt
+            const passwordConfirm:string = Auth.sha256(saltdb + password)
+                
+            if(passwordDB == passwordConfirm){
+              res.send({message: "Usuário Logado"})
+            }else{
+              res.send({message: "Deu errado!"})
+            }
         })
         
 
@@ -89,11 +89,16 @@ export default class UserController {
 
 
 
+    static async userUpdate(req:Request , res:Response){
+
+      const {name, email, phone , password, confirmpassword} = req.body
+      
 
 
 
 
 
+    }
 
 
 

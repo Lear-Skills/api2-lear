@@ -22,7 +22,7 @@ const UserModel = require('./models/UserModel');
 const conn = require('./db/conn');
 //==================================================================//
 try {
-    conn.sync() // colocar force: true ao alterar dados no BD
+    conn.sync() // colocar {force: true} ao alterar dados no BD
         .then(() => {
         console.log('server rodando na porta: ', port);
         app.listen(port);
