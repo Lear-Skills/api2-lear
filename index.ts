@@ -10,10 +10,13 @@ const port = 3333                                          //
 app.use(express.json())                                             //                                                                //
 //==================================================================//
 const userRoutes = require('./routes/userRoutes')
+const accountRoutes = require('./routes/AccountRoutes')
 //======================== APP Routes ==============================//                                                   //
-app.use('/user' , userRoutes)                                       //
+app.use('/user' , userRoutes)              
+app.use('/account' , accountRoutes)                         //
 //==================================================================//
 const UserModel = require('./models/UserModel')
+const AccountModel = require('./models/AccountModel')
 //==================== DB & Routes Start Script=====================//
 const conn = require('./db/conn');
 //==================================================================//

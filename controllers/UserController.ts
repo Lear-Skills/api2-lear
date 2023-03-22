@@ -4,6 +4,7 @@ import validationCredential from '../validations/validationsLogin'
 import {createUserToken} from "../helpers/createUserTokenTS"
 import UserClass  from "../models/UserModel"
 import {UserModel} from "../models/UserModelTS"
+import { AccountModel } from '../models/AccountModel';
 import Sequelize, { Model } from "sequelize";
 import dataOf from '../data-function/data';
 const saltLenght = 128;
@@ -68,10 +69,22 @@ export default class UserController {
             password: databasePassword , 
           }
 
+          const AccountCreated = {
+            name: SHAname,
+            email : SHAemail ,
+            user_Id : user_Id , 
+            balance : 100,
+            interest_rate : 0,
+            loan: 0,
+            debt: 0,
+            able_to_account: true
+
+          }
+
           const createdClassUser = new UserClass(SHAname,SHAemail,user_Id,databasePassword,salt,)
         try {
           const newUser = await UserModel.create(userCreated)
-          
+          const newAccount = await AccountModel.create(AccountCreated)
           await createUserToken(createdClassUser , req, res)
     
         } catch (error) {

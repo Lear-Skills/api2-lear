@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getToken = void 0;
 const jwt = require("jsonwebtoken");
 // get token from headers
 const getToken = (req) => {
@@ -9,4 +10,4 @@ const getToken = (req) => {
     //o segundo item , o token de fato, pois a primeira parte vem do postman
     return token;
 };
-module.exports = getToken;
+exports.getToken = getToken;

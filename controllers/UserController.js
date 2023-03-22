@@ -17,8 +17,11 @@ const validationsLogin_1 = __importDefault(require("../validations/validationsLo
 const createUserTokenTS_1 = require("../helpers/createUserTokenTS");
 const UserModel_1 = __importDefault(require("../models/UserModel"));
 const UserModelTS_1 = require("../models/UserModelTS");
+const AccountModel_1 = require("../models/AccountModel");
 const data_1 = __importDefault(require("../data-function/data"));
 const saltLenght = 128;
+const getOnly_token_1 = require("../helpers/getOnly-token");
+const jwt = require("jsonwebtoken");
 class UserController {
     //=========== Controller para Logar Usuário ===============================================//
     static userLogin(req, res) {
@@ -68,9 +71,20 @@ class UserController {
                     salt: salt,
                     password: databasePassword,
                 };
+                const AccountCreated = {
+                    name: SHAname,
+                    email: SHAemail,
+                    user_Id: user_Id,
+                    balance: 100,
+                    interest_rate: 0,
+                    loan: 0,
+                    debt: 0,
+                    able_to_account: true
+                };
                 const createdClassUser = new UserModel_1.default(SHAname, SHAemail, user_Id, databasePassword, salt);
                 try {
                     const newUser = yield UserModelTS_1.UserModel.create(userCreated);
+                    const newAccount = yield AccountModel_1.AccountModel.create(AccountCreated);
                     yield (0, createUserTokenTS_1.createUserToken)(createdClassUser, req, res);
                 }
                 catch (error) {
@@ -81,7 +95,7 @@ class UserController {
                 res.json({ message: 'Problema com o Cadastro' });
                 console.log("b");
             }
-            //================ Criptografia dos dados ===============//
+            //============================ Criptografia dos dados ==============================//
         });
     }
     //============================== UPDATE ===========================================//
@@ -119,11 +133,29 @@ class UserController {
             const { user_Id } = req.body;
             try {
                 yield UserModelTS_1.UserModel.destroy({ where: { user_Id: user_Id } });
+                res.send({ message: "Operação Delete deu certo!" });
             }
             catch (e) {
                 console.log(e);
                 res.send({ message: "Operação Delete não deu certo" });
             }
+        });
+    }
+    //============================= CheckUser =========================================//
+    static checkUser(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let currentUser;
+            console.log(req.headers.authorization);
+            if (req.headers.authorization) {
+                const token = (0, getOnly_token_1.getToken)(req);
+                const decoded = jwt.verify(token, 'nossosecret');
+                currentUser = yield UserModelTS_1.UserModel.findById(decoded.id);
+                currentUser.password = undefined;
+            }
+            else {
+                currentUser = null;
+            }
+            res.status(200).send(currentUser);
         });
     }
 }

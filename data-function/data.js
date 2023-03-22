@@ -11,5 +11,8 @@ class dataOf {
         const emailSHA = criptopass_1.default.sha256(email);
         return UserModelTS_1.UserModel.findOne({ where: { email: emailSHA }, raw: true });
     }
+    static user_Id(user_id) {
+        return UserModelTS_1.UserModel.findOne({ where: { user_Id: user_id }, raw: true });
+    }
 }
 exports.default = dataOf;
