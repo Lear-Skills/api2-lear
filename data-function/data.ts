@@ -19,8 +19,8 @@ export default class dataOf {
         return UserModel.findOne({where:{ user_Id: user_id }, raw: true})
     }
 
-    static accountByUserId(user:typeof UserModel){
-        return AccountModel.findOne({where:{user_Id : user.user_Id}})
+    static accountByUserId(user_id : string){
+        return AccountModel.findOne({where:{user_Id : user_id}})
     }
 
 

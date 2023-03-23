@@ -9,16 +9,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getUserByToken = void 0;
 const jwt = require("jsonwebtoken");
 const UserModelTS_1 = require("../models/UserModelTS");
 // get user by jwt token
-const getUserByToken = (token, res, req) => __awaiter(void 0, void 0, void 0, function* () {
+const getUserByToken = (token, res) => __awaiter(void 0, void 0, void 0, function* () {
     if (!token)
         return res.status(401).json({ error: "Acesso negado!" });
     // find user
     const decoded = jwt.verify(token, "nossosecret");
     const userId = decoded.id;
-    const user = yield UserModelTS_1.UserModel.findOne({ userId: userId });
+    const user = yield UserModelTS_1.UserModel.findOne({ where: { user_Id: userId }, raw: true });
     return user;
 });
-module.exports = getUserByToken;
+exports.getUserByToken = getUserByToken;

@@ -4,7 +4,7 @@ import { Request , Response } from 'express'
 
 
 // get user by jwt token
-const getUserByToken = async (token :any , res:Response , req:Request) => {
+const getUserByToken = async (token :any , res:Response) => {
   if (!token) return res.status(401).json({ error: "Acesso negado!" });
 
   // find user
@@ -12,9 +12,9 @@ const getUserByToken = async (token :any , res:Response , req:Request) => {
 
   const userId = decoded.id;
 
-  const user = await UserModel.findOne({ userId: userId });
+  const user = await UserModel.findOne({where:{ user_Id: userId } , raw:true});
 
-  return user;
+  return user
 };
 
-module.exports = getUserByToken;
+export {getUserByToken}
