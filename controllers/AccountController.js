@@ -18,6 +18,7 @@ const saltLenght = 128;
 const getUser_token_1 = require("../helpers/getUser-token");
 const getOnly_token_1 = require("../helpers/getOnly-token");
 const jwt = require("jsonwebtoken");
+const invest_1 = require("../invest_algorith/invest");
 class AccountController {
     static deposit(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -86,7 +87,7 @@ class AccountController {
             }
         });
     }
-    //Necessário Testar
+    //Necessário Testar //
     static give_loan(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { email, value } = req.body;
@@ -164,6 +165,11 @@ class AccountController {
     static gold_invest(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             const { value } = req.body;
+            const token = (0, getOnly_token_1.getToken)(req); // pega o token
+            const user = yield (0, getUser_token_1.getUserByToken)(token, res);
+            const account = yield data_1.default.accountByUserId(user.user_Id);
+            const tax = account.interest_rate;
+            const returnValue = invest_1.InvestAlgorithm.GoldInvestiment(value, tax);
         });
     }
 }

@@ -11,6 +11,7 @@ const saltLenght = 128;
 import {getUserByToken} from '../helpers/getUser-token'
 import {getToken} from '../helpers/getOnly-token'
 const jwt = require("jsonwebtoken");
+import InvestAlgorithm from '../invest_algorith/invest'
 
 
 
@@ -86,7 +87,7 @@ export default class AccountController {
 
     }
 
-    //Necessário Testar
+    //Necessário Testar //
     static async give_loan(req:Request , res:Response){
         const {email , value} = req.body
         const token = getToken(req)// pega o token
@@ -166,7 +167,13 @@ export default class AccountController {
     static async gold_invest(req:Request , res:Response){
         const {value} = req.body
 
+        const token = getToken(req)// pega o token
+        const user :typeof UserModel = await getUserByToken(token ,res)
+        const account = await dataOf.accountByUserId(user.user_Id)
         
+        const tax = account.interest_rate;
+
+        const returnValue = InvestAlgorithm.GoldInvestiment(value , tax);
 
     }
 
