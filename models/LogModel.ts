@@ -1,7 +1,7 @@
 import Sequelize, { Model } from "sequelize";
 const sequelize = require('../db/conn');
 // Define a model
-const Log = sequelize.define('log', {
+const LogModel = sequelize.define('log', {
   log: {
     type: Sequelize.STRING,
     allowNull: false
@@ -17,4 +17,4 @@ const Log = sequelize.define('log', {
   
 });
 
-export {Log}
+export {LogModel}
