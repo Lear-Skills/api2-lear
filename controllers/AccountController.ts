@@ -182,6 +182,7 @@ export default class AccountController {
         
         const returnValue = InvestAlgorithm.GoldInvestiment(value , tax);
         Log.register("Gold_invest : " +returnValue + "ID do usuário:" + user.user_Id , "Gold_Invest")
+        res.send({investimento_return:returnValue})
     }
 
     static async Bronze_invest(req:Request , res:Response){
@@ -194,6 +195,7 @@ export default class AccountController {
         const tax = account.interest_rate;
 
         const returnValue = InvestAlgorithm.BronzeInvestiment(value , tax);
+        res.send({investimento_return:returnValue})
         Log.register("Bronze_invest : " +returnValue + "ID do usuário:" + user.user_Id , "Bronze_invest")
     }
 
@@ -208,6 +210,7 @@ export default class AccountController {
         
         const returnValue = InvestAlgorithm.CooperInvestiment(value , tax);
         Log.register("Cooper_invest : " +returnValue + "ID do usuário:" + user.user_Id , "Cooper_invest")
+        res.send({investimento_return:returnValue})
     }
 
 

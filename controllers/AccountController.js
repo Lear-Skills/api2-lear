@@ -19,6 +19,7 @@ const getUser_token_1 = require("../helpers/getUser-token");
 const getOnly_token_1 = require("../helpers/getOnly-token");
 const jwt = require("jsonwebtoken");
 const invest_1 = __importDefault(require("../invest_algorith/invest"));
+const log_1 = __importDefault(require("../Log/log"));
 class AccountController {
     static deposit(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -31,6 +32,7 @@ class AccountController {
             try {
                 yield AccountModel_1.AccountModel.update({ balance: new_balance }, { where: { user_Id: account.user_Id } });
                 res.send({ message: "Saldo depositado de", saldo: new_balance });
+                log_1.default.register("Saldo depositado de" + new_balance + "ID do usuário:" + user.user_Id, "Depósito");
             }
             catch (e) {
                 console.log(e);
@@ -53,6 +55,7 @@ class AccountController {
                 try {
                     yield AccountModel_1.AccountModel.update({ debt: debt_value }, { where: { user_Id: account.user_Id } });
                     res.send({ message: "Saldo retirado, você está no Negativo já que o valor que retirou é maior que o valor atual" });
+                    log_1.default.register("Débito de" + debt_value + "ID do usuário:" + user.user_Id, "Quitação de Dívida");
                 }
                 catch (e) {
                     console.log(e);
@@ -63,6 +66,7 @@ class AccountController {
                 try {
                     yield AccountModel_1.AccountModel.update({ balance: new_balance }, { where: { user_Id: account.user_Id } });
                     res.send({ message: "Saldo agora é", saldo: new_balance });
+                    log_1.default.register("Saldo novo de " + new_balance + "ID do usuário:" + user.user_Id, "Quitação Parcial de Dívida");
                 }
                 catch (e) {
                     console.log(e);
@@ -81,6 +85,7 @@ class AccountController {
             try {
                 yield AccountModel_1.AccountModel.update({ able_to_account: false }, { where: { user_Id: account.user_Id } });
                 res.send({ message: "Usuário Está na Lista Negra" });
+                log_1.default.register("Usuário na Black-List " + "ID do usuário:" + user.user_Id, "Black_list");
             }
             catch (e) {
                 console.log(e);
@@ -106,6 +111,7 @@ class AccountController {
                 try {
                     yield AccountModel_1.AccountModel.update({ balance: new_balance, loan: new_loan }, { where: { user_Id: account.user_Id } });
                     res.send({ message: "Adicionado Empréstimo" });
+                    log_1.default.register("Empréstimo de " + value + "ID do usuário:" + user.user_Id, "Empréstimo");
                 }
                 catch (e) {
                     console.log(e);
@@ -156,6 +162,7 @@ class AccountController {
             try {
                 yield AccountModel_1.AccountModel.update({ interest_rate: new_ir }, { where: { user_Id: account.user_Id } });
                 res.send({ message: "interest_rate aumentado" });
+                log_1.default.register("Nova taxa de Interesse de : " + new_ir + "ID do usuário:" + user.user_Id, "interest_rate");
             }
             catch (e) {
                 console.log(e);
@@ -170,6 +177,8 @@ class AccountController {
             const account = yield data_1.default.accountByUserId(user.user_Id);
             const tax = account.interest_rate;
             const returnValue = invest_1.default.GoldInvestiment(value, tax);
+            log_1.default.register("Gold_invest : " + returnValue + "ID do usuário:" + user.user_Id, "Gold_Invest");
+            res.send({ investimento_return: returnValue });
         });
     }
     static Bronze_invest(req, res) {
@@ -180,6 +189,8 @@ class AccountController {
             const account = yield data_1.default.accountByUserId(user.user_Id);
             const tax = account.interest_rate;
             const returnValue = invest_1.default.BronzeInvestiment(value, tax);
+            res.send({ investimento_return: returnValue });
+            log_1.default.register("Bronze_invest : " + returnValue + "ID do usuário:" + user.user_Id, "Bronze_invest");
         });
     }
     static Cooper_invest(req, res) {
@@ -190,6 +201,8 @@ class AccountController {
             const account = yield data_1.default.accountByUserId(user.user_Id);
             const tax = account.interest_rate;
             const returnValue = invest_1.default.CooperInvestiment(value, tax);
+            log_1.default.register("Cooper_invest : " + returnValue + "ID do usuário:" + user.user_Id, "Cooper_invest");
+            res.send({ investimento_return: returnValue });
         });
     }
 }

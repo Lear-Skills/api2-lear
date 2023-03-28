@@ -17,7 +17,7 @@ app.use('/account' , accountRoutes)                         //
 //==================================================================//
 const UserModel = require('./models/UserModel')
 const AccountModel = require('./models/AccountModel')
-const Log = require('./models/Log')
+const Log = require('./models/LogModel')
 //==================== DB & Routes Start Script=====================//
 const conn = require('./db/conn');
 //==================================================================//
