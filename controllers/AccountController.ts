@@ -12,6 +12,7 @@ import {getUserByToken} from '../helpers/getUser-token'
 import {getToken} from '../helpers/getOnly-token'
 const jwt = require("jsonwebtoken");
 import InvestAlgorithm from '../invest_algorith/invest'
+import Log from "../Log/log"
 
 
 
@@ -31,6 +32,7 @@ export default class AccountController {
         try{
             await AccountModel.update({balance:new_balance} , {where:{user_Id:account.user_Id}})
             res.send({message: "Saldo depositado de", saldo:new_balance})
+            Log.register("Saldo depositado de" + new_balance + "ID do usuário:" + user.user_Id , "Depósito")
         }catch(e:any){
             console.log(e)
         }
@@ -54,6 +56,7 @@ export default class AccountController {
             try{
                 await AccountModel.update({debt:debt_value} , {where:{user_Id:account.user_Id}})
                 res.send({message:"Saldo retirado, você está no Negativo já que o valor que retirou é maior que o valor atual"})
+                Log.register("Débito de" + debt_value + "ID do usuário:" + user.user_Id , "Quitação de Dívida")
             }catch(e:any){
                 console.log(e)
             }
@@ -63,6 +66,7 @@ export default class AccountController {
             try{
                 await AccountModel.update({balance:new_balance} , {where:{user_Id:account.user_Id}})
                 res.send({message: "Saldo agora é", saldo:new_balance})
+                Log.register("Saldo novo de " + new_balance + "ID do usuário:" + user.user_Id , "Quitação Parcial de Dívida")
             }catch(e:any){
                 console.log(e)
             }
@@ -81,6 +85,7 @@ export default class AccountController {
         try{
             await AccountModel.update({able_to_account:false} , {where:{user_Id:account.user_Id}})
             res.send({message: "Usuário Está na Lista Negra"})
+            Log.register("Usuário na Black-List " + "ID do usuário:" + user.user_Id , "Black_list")
         }catch(e:any){
             console.log(e)
         }
@@ -104,6 +109,7 @@ export default class AccountController {
             try{
                 await AccountModel.update({balance:new_balance ,  loan : new_loan} , {where:{user_Id:account.user_Id}})
                 res.send({message: "Adicionado Empréstimo"})
+                Log.register("Empréstimo de " + value + "ID do usuário:" + user.user_Id , "Empréstimo")
             }catch(e:any){
                 console.log(e)
             }
@@ -157,6 +163,7 @@ export default class AccountController {
         try{
             await AccountModel.update({interest_rate :  new_ir} , {where:{user_Id:account.user_Id}})
             res.send({message: "interest_rate aumentado"})
+            Log.register("Nova taxa de Interesse de : " + new_ir + "ID do usuário:" + user.user_Id , "interest_rate")
         }catch(e:any){
             console.log(e)
         }
@@ -172,9 +179,9 @@ export default class AccountController {
         const account = await dataOf.accountByUserId(user.user_Id)
         
         const tax = account.interest_rate;
-
+        
         const returnValue = InvestAlgorithm.GoldInvestiment(value , tax);
-
+        Log.register("Gold_invest : " +returnValue + "ID do usuário:" + user.user_Id , "Gold_Invest")
     }
 
     static async Bronze_invest(req:Request , res:Response){
@@ -187,7 +194,7 @@ export default class AccountController {
         const tax = account.interest_rate;
 
         const returnValue = InvestAlgorithm.BronzeInvestiment(value , tax);
-
+        Log.register("Bronze_invest : " +returnValue + "ID do usuário:" + user.user_Id , "Bronze_invest")
     }
 
     static async Cooper_invest(req:Request , res:Response){
@@ -200,7 +207,7 @@ export default class AccountController {
         const tax = account.interest_rate;
         
         const returnValue = InvestAlgorithm.CooperInvestiment(value , tax);
-
+        Log.register("Cooper_invest : " +returnValue + "ID do usuário:" + user.user_Id , "Cooper_invest")
     }
 
 
