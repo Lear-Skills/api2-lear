@@ -164,7 +164,7 @@ export default class AccountController {
 
     }
 
-    static async gold_invest(req:Request , res:Response){
+    static async Gold_invest(req:Request , res:Response){
         const {value} = req.body
 
         const token = getToken(req)// pega o token
@@ -174,6 +174,32 @@ export default class AccountController {
         const tax = account.interest_rate;
 
         const returnValue = InvestAlgorithm.GoldInvestiment(value , tax);
+
+    }
+
+    static async Bronze_invest(req:Request , res:Response){
+        const {value} = req.body
+
+        const token = getToken(req)// pega o token
+        const user :typeof UserModel = await getUserByToken(token ,res)
+        const account = await dataOf.accountByUserId(user.user_Id)
+        
+        const tax = account.interest_rate;
+
+        const returnValue = InvestAlgorithm.BronzeInvestiment(value , tax);
+
+    }
+
+    static async Cooper_invest(req:Request , res:Response){
+        const {value} = req.body
+
+        const token = getToken(req)// pega o token
+        const user :typeof UserModel = await getUserByToken(token ,res)
+        const account = await dataOf.accountByUserId(user.user_Id)
+        
+        const tax = account.interest_rate;
+        
+        const returnValue = InvestAlgorithm.CooperInvestiment(value , tax);
 
     }
 

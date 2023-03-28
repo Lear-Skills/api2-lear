@@ -17,7 +17,11 @@ router.post('/pay_loan' , AccountController.pay_loan)
 
 router.post('/add_int_rate' , AccountController.add_int_rate)
 
-router.post('/gold_invest' , AccountController.gold_invest)
+router.post('/gold_invest' , AccountController.Gold_invest)
+
+router.post('/bronze_invest' , AccountController.Bronze_invest)
+
+router.post('/cooper_invest' , AccountController.Cooper_invest)
 
 
 
