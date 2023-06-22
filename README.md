@@ -14,8 +14,6 @@ Overall, this API offers a comprehensive banking management system with investme
         - users/update
         - users/delete
         - users/checkUser
-        - users/delete
-        - users/delete
 
     - Account's Routes:
         - account/withdraw
