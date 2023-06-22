@@ -17,7 +17,6 @@ const validationsLogin_1 = __importDefault(require("../validations/validationsLo
 const createUserTokenTS_1 = require("../helpers/createUserTokenTS");
 const UserModel_1 = __importDefault(require("../models/UserModel"));
 const UserModelTS_1 = require("../models/UserModelTS");
-const AccountModel_1 = require("../models/AccountModel");
 const data_1 = __importDefault(require("../data-function/data"));
 const saltLenght = 128;
 const getOnly_token_1 = require("../helpers/getOnly-token");
@@ -84,7 +83,6 @@ class UserController {
                 const createdClassUser = new UserModel_1.default(SHAname, SHAemail, user_Id, databasePassword, salt);
                 try {
                     const newUser = yield UserModelTS_1.UserModel.create(userCreated);
-                    const newAccount = yield AccountModel_1.AccountModel.create(AccountCreated);
                     yield (0, createUserTokenTS_1.createUserToken)(createdClassUser, req, res);
                 }
                 catch (error) {

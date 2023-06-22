@@ -4,7 +4,7 @@ import validationCredential from '../validations/validationsLogin'
 import {createUserToken} from "../helpers/createUserTokenTS"
 import UserClass  from "../models/UserModel"
 import {UserModel} from "../models/UserModelTS"
-import { AccountModel } from '../models/AccountModel';
+
 import Sequelize, { Model } from "sequelize";
 const saltLenght = 128;
 
@@ -19,9 +19,7 @@ export default class dataOf {
         return UserModel.findOne({where:{ user_Id: user_id }, raw: true})
     }
 
-    static accountByUserId(user_id : string){
-        return AccountModel.findOne({where:{user_Id : user_id}})
-    }
+   
 
 
 
