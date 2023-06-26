@@ -2,7 +2,7 @@
 const Sequelize = require('sequelize');
 require('dotenv').config();
 // Create a new Sequelize instance
-const sequelize = new Sequelize('apiTSdb', 'gui', '', {
+const sequelize = new Sequelize('apiTSdb', 'root', 'qwe123asd', {
     host: 'localhost',
     dialect: 'mysql'
 });

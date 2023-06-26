@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const criptopass_1 = __importDefault(require("../auth/criptopass"));
-const validationsLogin_1 = __importDefault(require("../validations/validationsLogin"));
+const validationsLogin_1 = require("../validations/validationsLogin");
 const createUserTokenTS_1 = require("../helpers/createUserTokenTS");
 const UserModel_1 = __importDefault(require("../models/UserModel"));
 const UserModelTS_1 = require("../models/UserModelTS");
@@ -25,37 +25,37 @@ class UserController {
     //=========== Controller para Logar Usuário ===============================================//
     static userLogin(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { email, password } = req.body;
-            if (!email && !password) {
-                res.status(422).json({ message: 'O e-mail/ senha é obrigatório!' });
-                return;
-            }
-            const emailSHA1 = criptopass_1.default.sha256(email);
-            // check if user exists
-            const user = yield UserModelTS_1.UserModel.findOne({ where: { email: emailSHA1 } });
-            if (!user) {
-                return res
-                    .status(422)
-                    .json({ message: 'Não há usuário cadastrado com este e-mail!' });
-            }
-            data_1.default.userEmail(email).then((AfuckingPromise) => {
-                const passwordDB = AfuckingPromise.password;
-                const saltdb = AfuckingPromise.salt;
+            try {
+                const { email, password } = req.body;
+                validationsLogin_1.Validation.Login(email, password);
+                const emailSHA1 = criptopass_1.default.sha256(email);
+                const user = yield data_1.default.userEmail(email);
+                if (!user) {
+                    throw new Error('Usuário ou senha inválidos');
+                }
+                const passwordDB = user.password;
+                const saltdb = user.salt;
                 const passwordConfirm = criptopass_1.default.sha256(password + saltdb);
-                if (passwordDB == passwordConfirm) {
-                    (0, createUserTokenTS_1.createUserToken)(user, req, res);
+                if (passwordDB != passwordConfirm) {
+                    throw new Error('Usuário ou senha inválidos');
                 }
-                else {
-                    res.send({ message: "Deu errado!" });
+                (0, createUserTokenTS_1.createUserToken)(user, req, res);
+            }
+            catch (error) {
+                let messenge = 'Ocorreu erro no login';
+                if (error === null || error === void 0 ? void 0 : error.message) {
+                    messenge = error.message;
                 }
-            });
+                res.status(500).json({ messenge });
+            }
         });
     }
     //=========== Controller para Registrar Usuário ===========================================//
     static userRegister(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { name, email, phone, password, confirmpassword } = req.body;
-            if ((0, validationsLogin_1.default)(name, email, phone, password, confirmpassword)) {
+            try {
+                const { name, email, phone, password, confirmpassword } = req.body;
+                validationsLogin_1.Validation.Credential(name, email, phone, password, confirmpassword);
                 const SHAemail = criptopass_1.default.sha256(email);
                 const SHAphone = criptopass_1.default.sha256(phone);
                 const SHAname = name;
@@ -81,17 +81,15 @@ class UserController {
                     able_to_account: true
                 };
                 const createdClassUser = new UserModel_1.default(SHAname, SHAemail, user_Id, databasePassword, salt);
-                try {
-                    const newUser = yield UserModelTS_1.UserModel.create(userCreated);
-                    yield (0, createUserTokenTS_1.createUserToken)(createdClassUser, req, res);
-                }
-                catch (error) {
-                    res.status(500).json({ message: error });
-                }
+                const newUser = yield UserModelTS_1.UserModel.create(userCreated);
+                yield (0, createUserTokenTS_1.createUserToken)(createdClassUser, req, res);
             }
-            else {
-                res.json({ message: 'Problema com o Cadastro' });
-                console.log("b");
+            catch (error) {
+                let messenge = 'Ocorreu erro ao criar o usuário';
+                if (error === null || error === void 0 ? void 0 : error.message) {
+                    messenge = error.message;
+                }
+                res.status(500).json({ messenge });
             }
             //============================ Criptografia dos dados ==============================//
         });
@@ -99,29 +97,57 @@ class UserController {
     //============================== UPDATE ===========================================//
     static userUpdate(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { name, email, phone, password } = req.body;
-            const emailSHA = criptopass_1.default.sha256(email);
-            const user = {
-                phone: phone,
-                name: name
-            };
-            data_1.default.userEmail(email).then((AfuckingPromise) => {
-                const passwordDB = AfuckingPromise.password;
-                const saltdb = AfuckingPromise.salt;
-                const passwordConfirm = criptopass_1.default.sha256(password + saltdb);
-                if (passwordDB == passwordConfirm) {
-                }
-                else {
-                    res.send({ message: "Deu errado!" });
-                }
-            });
             try {
+                const { name, email, phone } = req.body;
+                validationsLogin_1.Validation.CredentialUpdate(name, email, phone);
+                const emailSHA = criptopass_1.default.sha256(email);
+                const user = {
+                    phone: phone,
+                    name: name
+                };
+                const dataUser = yield data_1.default.userEmail(email);
+                if (!dataUser || dataUser.email != emailSHA) {
+                    res.send({ message: "Deu errado!" });
+                    return;
+                }
                 yield UserModelTS_1.UserModel.update(user, { where: { email: emailSHA } });
                 res.send({ message: "Usuário Atualizado" });
             }
-            catch (e) {
-                console.log(e);
-                res.send({ message: "Não deu certo" });
+            catch (error) {
+                console.error(error);
+                let messenge = 'Ocorreu erro ao atualizar o usuário';
+                if (error === null || error === void 0 ? void 0 : error.message) {
+                    messenge = error.message;
+                }
+                res.status(500).json({ messenge });
+            }
+        });
+    }
+    static userUpdatePassword(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { email, password, newPassword, confirmpassword } = req.body;
+                validationsLogin_1.Validation.CredentialPassword(email, password, newPassword, confirmpassword);
+                const emailSHA = criptopass_1.default.sha256(email);
+                const dataUser = yield data_1.default.userEmail(email);
+                const saltdb = dataUser.salt;
+                const passwordLogin = criptopass_1.default.sha256(password + saltdb);
+                if (!dataUser || dataUser.password != passwordLogin) {
+                    throw new Error('Usuário ou senha inválidos');
+                }
+                const user = {
+                    password: criptopass_1.default.sha256(newPassword + saltdb)
+                };
+                yield UserModelTS_1.UserModel.update(user, { where: { email: emailSHA } });
+                res.send({ message: "Senha Atualizada" });
+            }
+            catch (error) {
+                console.error(error);
+                let messenge = 'Ocorreu erro ao atualizar a senha do usuário';
+                if (error === null || error === void 0 ? void 0 : error.message) {
+                    messenge = error.message;
+                }
+                res.status(500).json({ messenge });
             }
         });
     }

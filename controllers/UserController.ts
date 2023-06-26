@@ -1,6 +1,6 @@
 import { Request , Response } from 'express'
 import Auth from '../auth/criptopass';
-import validationCredential from '../validations/validationsLogin'
+import { Validation } from '../validations/validationsLogin'
 import {createUserToken} from "../helpers/createUserTokenTS"
 import UserClass  from "../models/UserModel"
 import {UserModel} from "../models/UserModelTS"
@@ -18,82 +18,76 @@ export default class UserController {
     
     //=========== Controller para Logar Usuário ===============================================//
     static async userLogin(req:Request , res:Response){
+      try {
         const {  email , password  } = req.body;
+        Validation.Login(email, password);
         
-        if (!email && !password) {
-          res.status(422).json({ message: 'O e-mail/ senha é obrigatório!' })
-          return
-        }
-        const emailSHA1 = Auth.sha256(email)
-        // check if user exists
-        const user = await UserModel.findOne({where: { email: emailSHA1 }})
+        const emailSHA1 = Auth.sha256(email);
+        const user = await dataOf.userEmail(email);
         if (!user) {
-          return res
-            .status(422)
-            .json({ message: 'Não há usuário cadastrado com este e-mail!' })
+          throw new Error('Usuário ou senha inválidos');
         }
+        const passwordDB:string = user.password;
+        const saltdb:string = user.salt;
+        const passwordConfirm:string = Auth.sha256(password + saltdb);
+        if (passwordDB != passwordConfirm) {
+          throw new Error('Usuário ou senha inválidos');
+        }
+        createUserToken(user, req, res);
         
-          dataOf.userEmail(email).then((AfuckingPromise:any) => {
-            const passwordDB:string = AfuckingPromise.password 
-            const saltdb:string = AfuckingPromise.salt
-            const passwordConfirm:string = Auth.sha256(password + saltdb)    
-            if(passwordDB == passwordConfirm){
-              createUserToken(user, req, res)
-            }else{
-              res.send({message: "Deu errado!"})
-            }
-        })
-        
-
+      } catch (error: Error | any) {
+        let messenge = 'Ocorreu erro no login';
+        if (error?.message) {
+          messenge = error.message;
+        }
+        res.status(500).json({ messenge });
+      }
 
     }
 
     //=========== Controller para Registrar Usuário ===========================================//
-    static async userRegister(req:Request , res:Response){
+    static async userRegister(req:Request , res:Response) {
+      try {
         const {name, email, phone , password, confirmpassword} = req.body
 
-        if(validationCredential (name ,email , phone , password, confirmpassword)){
-          const SHAemail = Auth.sha256(email)
-          const SHAphone = Auth.sha256(phone);
-          const SHAname = name;
-          const salt = Auth.new_salt(saltLenght);
-          const databasePassword = Auth.sha256(password+salt)
-          const user_Id = Auth.newUserId()
-        
-          const userCreated  = {
-            name : SHAname , 
-            email : SHAemail ,
-            user_Id : user_Id ,
-            phone : SHAphone , 
-            salt : salt , 
-            password: databasePassword , 
-          }
+        Validation.Credential(name, email, phone, password, confirmpassword);
+        const SHAemail = Auth.sha256(email);
+        const SHAphone = Auth.sha256(phone);
+        const SHAname = name;
+        const salt = Auth.new_salt(saltLenght);
+        const databasePassword = Auth.sha256(password+salt);
+        const user_Id = Auth.newUserId();
 
-          const AccountCreated = {
-            name: SHAname,
-            email : SHAemail ,
-            user_Id : user_Id , 
-            balance : 100,
-            interest_rate : 0,
-            loan: 0,
-            debt: 0,
-            able_to_account: true
+        const userCreated = {
+          name : SHAname, 
+          email : SHAemail,
+          user_Id : user_Id,
+          phone : SHAphone, 
+          salt : salt, 
+          password: databasePassword, 
+        };
 
-          }
+        const AccountCreated = {
+          name: SHAname,
+          email : SHAemail ,
+          user_Id : user_Id , 
+          balance : 100,
+          interest_rate : 0,
+          loan: 0,
+          debt: 0,
+          able_to_account: true
+        };
 
-          const createdClassUser = new UserClass(SHAname,SHAemail,user_Id,databasePassword,salt,)
-        try {
-          const newUser = await UserModel.create(userCreated)
-      
-          await createUserToken(createdClassUser , req, res)
-    
-        } catch (error) {
-          res.status(500).json({ message: error })
-        }   
-        }else{
-            res.json({ message: 'Problema com o Cadastro' })
-            console.log("b")
+        const createdClassUser = new UserClass(SHAname, SHAemail, user_Id, databasePassword, salt);
+        const newUser = await UserModel.create(userCreated);
+        await createUserToken(createdClassUser , req, res);
+      } catch (error: Error | any) {
+        let messenge = 'Ocorreu erro ao criar o usuário';
+        if (error?.message) {
+          messenge = error.message;
         }
+        res.status(500).json({ messenge });
+      }
     //============================ Criptografia dos dados ==============================//
         
     }
@@ -101,28 +95,55 @@ export default class UserController {
 
     //============================== UPDATE ===========================================//
     static async userUpdate(req:Request , res:Response){
-      const {name, email, phone , password} = req.body;
-      const emailSHA = Auth.sha256(email)
-      const user  = {
-        phone: phone,
-        name: name
+      try{
+        const {name, email, phone} = req.body;
+        Validation.CredentialUpdate(name, email, phone);
+        const emailSHA = Auth.sha256(email)
+        const user  = {
+          phone: phone,
+          name: name
+        }
+        const dataUser = await dataOf.userEmail(email);
+        if (!dataUser || dataUser.email != emailSHA) {
+          res.send({message: "Deu errado!"});
+          return;
+        }
+        await UserModel.update(user, {where: {email: emailSHA}});
+        res.send({message:"Usuário Atualizado"});
+      } catch(error: Error | any) {
+        console.error(error);
+        let messenge = 'Ocorreu erro ao atualizar o usuário';
+        if (error?.message) {
+          messenge = error.message;
+        }
+        res.status(500).json({ messenge });
       }
-      dataOf.userEmail(email).then((AfuckingPromise:any) => {
-        const passwordDB:string = AfuckingPromise.password 
-        const saltdb:string = AfuckingPromise.salt
-        const passwordConfirm:string = Auth.sha256(password + saltdb)    
-        if(passwordDB == passwordConfirm){
-        }else{
-          res.send({message: "Deu errado!"})
+    }
+
+    static async userUpdatePassword(req:Request , res:Response){
+      try{
+        const {email, password, newPassword, confirmpassword} = req.body;
+        Validation.CredentialPassword(email, password, newPassword, confirmpassword);
+        const emailSHA = Auth.sha256(email);
+        const dataUser = await dataOf.userEmail(email);
+        const saltdb: string = dataUser.salt;
+        const passwordLogin: string = Auth.sha256(password + saltdb);
+        if (!dataUser || dataUser.password != passwordLogin) {
+          throw new Error('Usuário ou senha inválidos');
         }
-      })
-        try{
-          await UserModel.update(user, {where: {email: emailSHA}});
-          res.send({message:"Usuário Atualizado"})
-        }catch(e:any){
-          console.log(e)
-          res.send({message : "Não deu certo"})
+        const user  = {
+          password: Auth.sha256(newPassword + saltdb)
         }
+        await UserModel.update(user, {where: {email: emailSHA}});
+        res.send({message:"Senha Atualizada"});
+      } catch(error: Error | any) {
+        console.error(error);
+        let messenge = 'Ocorreu erro ao atualizar a senha do usuário';
+        if (error?.message) {
+          messenge = error.message;
+        }
+        res.status(500).json({ messenge });
+      }
     }
 
     //============================== DELETE ===========================================//

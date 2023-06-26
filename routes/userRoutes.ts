@@ -8,6 +8,8 @@ router.post('/login' , UserController.userLogin)
 
 router.post('/update' , UserController.userUpdate)
 
+router.post('/updatePassword' , UserController.userUpdatePassword)
+
 router.post('/delete' , UserController.userDelete)
 
 router.post('/checkUser' , UserController.checkUser)

@@ -14,13 +14,10 @@ const port = 3333; //
 app.use(express_1.default.json()); //                                                                //
 //==================================================================//
 const userRoutes = require('./routes/userRoutes');
-const accountRoutes = require('./routes/AccountRoutes');
 //======================== APP Routes ==============================//                                                   //
-app.use('/user', userRoutes);
-app.use('/account', accountRoutes); //
+app.use('/user', userRoutes); //
 //==================================================================//
 const UserModel = require('./models/UserModel');
-const AccountModel = require('./models/AccountModel');
 const Log = require('./models/LogModel');
 //==================== DB & Routes Start Script=====================//
 const conn = require('./db/conn');
