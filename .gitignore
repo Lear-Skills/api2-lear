@@ -20,7 +20,8 @@ yarn-error.log*
 Thumbs.db
 
 # IDE files
-.vscode
+.vscode/*
+!.vscode/launch.json
 
 # Yarn
 .yarn
