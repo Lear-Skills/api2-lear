@@ -1,6 +1,5 @@
 const express = require('express');
-const bodyParser = require('body-parser');
-const NotasModel = require('./notasModel.js');
+const NotasModel = require('./models/notasModel.js');
 
 const app = express();
 app.use(bodyParser.json());
@@ -24,7 +23,5 @@ app.post('/notas', async (req, res) => {
     }
   });
 
-  app.listen(3000, () => {
-    console.log('API rodando na porta 3000');
-  });
+  
   

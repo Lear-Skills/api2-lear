@@ -1,4 +1,4 @@
-const UserModel = require('./userModels.js');
+const UserModel = require('./src/Models/UserModel.ts');
 
 async function getProvasENotasPorIdUsuario(userId) {
     try {
