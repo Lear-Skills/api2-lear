@@ -6,11 +6,11 @@ router.post('/register' , UserController.userRegister)
 
 router.post('/login' , UserController.userLogin)
 
-router.post('/update' , UserController.userUpdate)
+router.put('/update' , UserController.userUpdate)
 
-router.post('/updatePassword' , UserController.userUpdatePassword)
+router.put('/update/password' , UserController.userUpdatePassword)
 
-router.post('/delete' , UserController.userDelete)
+router.delete('/delete' , UserController.userDelete)
 
 router.post('/checkUser' , UserController.checkUser)
 

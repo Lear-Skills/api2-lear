@@ -48,9 +48,9 @@ export default class UserController {
     //=========== Controller para Registrar Usuário ===========================================//
     static async userRegister(req:Request , res:Response) {
       try {
-        const {name, email, phone , password, confirmpassword} = req.body
+        const {name, email, phone , password, confirmPassword} = req.body
 
-        Validation.Credential(name, email, phone, password, confirmpassword);
+        Validation.Credential(name, email, phone, password, confirmPassword);
         const SHAemail = Auth.sha256(email);
         const SHAphone = Auth.sha256(phone);
         const SHAname = name;
@@ -122,8 +122,8 @@ export default class UserController {
 
     static async userUpdatePassword(req:Request , res:Response){
       try{
-        const {email, password, newPassword, confirmpassword} = req.body;
-        Validation.CredentialPassword(email, password, newPassword, confirmpassword);
+        const {email, password, newPassword, confirmPassword} = req.body;
+        Validation.CredentialPassword(email, password, newPassword, confirmPassword);
         const emailSHA = Auth.sha256(email);
         const dataUser = await dataOf.userEmail(email);
         const saltdb: string = dataUser.salt;
