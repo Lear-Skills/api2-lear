@@ -12,6 +12,10 @@ router.put('/update/password' , UserController.userUpdatePassword)
 
 router.delete('/delete' , UserController.userDelete)
 
+router.get('/getInfo' , UserController.getUser)
+
+router.put('/updateInfo' , UserController.updateUserInfo)
+
 router.post('/checkUser' , UserController.checkUser)
 
 module.exports = router;

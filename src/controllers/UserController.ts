@@ -4,6 +4,7 @@ import { Validation } from '../validations/validationsLogin'
 import {createUserToken} from "../helpers/createUserTokenTS"
 import UserClass  from "../models/UserModel"
 import {UserModel} from "../models/UserModelTS"
+import { UserInfo } from '../models/UserInfo';
 
 import Sequelize, { Model } from "sequelize";
 import dataOf from '../data-function/data';
@@ -49,6 +50,7 @@ export default class UserController {
     static async userRegister(req:Request , res:Response) {
       try {
         const {name, email, phone , password, confirmPassword} = req.body
+        
 
         Validation.Credential(name, email, phone, password, confirmPassword);
         const SHAemail = Auth.sha256(email);
@@ -67,19 +69,17 @@ export default class UserController {
           password: databasePassword, 
         };
 
-        const AccountCreated = {
-          name: SHAname,
-          email : SHAemail ,
-          user_Id : user_Id , 
-          balance : 100,
-          interest_rate : 0,
-          loan: 0,
-          debt: 0,
-          able_to_account: true
+        const UserInfoCreated  = {
+          name: name,
+          description : SHAemail ,
+          idUser : user_Id , 
+          photo : null,
+          links: null
         };
 
         const createdClassUser = new UserClass(SHAname, SHAemail, user_Id, databasePassword, salt);
         const newUser = await UserModel.create(userCreated);
+        const newInfo = await UserInfo.create(UserInfoCreated)
         await createUserToken(createdClassUser , req, res);
       } catch (error: Error | any) {
         let messenge = 'Ocorreu erro ao criar o usuário';
@@ -172,6 +172,35 @@ export default class UserController {
         currentUser = null
       }
       res.status(200).send(currentUser)
+    }
+
+    static async getUser(req: Request, res:Response) { 
+      const id = req.body.id
+
+      const userInfo = UserInfo.findOne({where: {idUser : id}})
+
+      return userInfo
+
+    }
+
+    static async updateUserInfo(req: Request, res:Response){
+
+      const {name, description , photo, links, id} = req.body
+
+      const updateInfo = {
+        name: name,
+        description :  description ,
+        photo :photo,
+        links:links
+
+      }
+
+      try{
+        const userinfoSave = UserInfo.update(updateInfo, {where: {idUser : id}});
+      }catch(e : any){
+        return e
+      }
+
     }
 
 
