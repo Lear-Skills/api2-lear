@@ -1,6 +1,26 @@
 ﻿# API-LEAR
 
+Para rodar a API, você vai precisar instalar:
+- [nodejs](https://nodejs.org/en/download)
+- [docker](https://www.docker.com/products/docker-desktop/)
 
+**Instale os pacores**
+```
+npm install
+```
+
+**Execute banco dados** *(novo terminal)*
+```
+npm run db
+```
+
+**Execute servidor API** *(novo terminal)*
+```
+npm run start
+```
+
+<br>
+<br>
 
 # Rotas da API
 
