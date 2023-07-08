@@ -1,33 +1,38 @@
 //===================== IMPORTS ====================================//
-import express from "express"                                     //
-import { Request, Response } from "express";                //                        
+import express from "express"                                       //
+import { Request, Response, NextFunction } from "express";          //
 //==================================================================//
 //========================== Instanciar ============================//
 const app = express();                                              //
-const port = 3333                                          //
+const port = 3333;                                                  //
+let isDbConnected = false;                                          //
 //==================================================================//
 //======================= Express Config ===========================//
-app.use(express.json())                                             //                                                                //
+app.use(express.json())                                             //
+app.use((req: Request, rep: Response, next: NextFunction) => {      //
+    if (!isDbConnected) {                                           //
+        return rep.status(500).send('DB is not connected');         //
+    }                                                               //
+    next();                                                         //
+});                                                                 //
 //==================================================================//
-const userRoutes = require('./routes/userRoutes')
-//======================== APP Routes ==============================//                                                   //
-app.use('/user' , userRoutes)                                   //
+const userRoutes = require('./routes/userRoutes');                  //
+//======================== APP Routes ==============================//
+app.use('/user' , userRoutes);                                      //
 //==================================================================//
-const UserModel = require('./models/UserModel')
-const Log = require('./models/LogModel')
+const UserModel = require('./models/UserModel');                    //
+const Log = require('./models/LogModel');                           //
 //==================== DB & Routes Start Script=====================//
-const conn = require('./db/conn');
+const { autoConnectionDB } = require('./db/autoConn');              //
 //==================================================================//
 try{
-    conn.sync()// colocar {force: true} ao alterar dados no BD
-.then( ()=> {
-    console.log('server rodando na porta:', port)
-    app.listen(port)
-})
-.catch((err : any)=> {console.log(err)})
-}catch(e:any){
-    console.log(e)
+    autoConnectionDB()
+        .then((data: boolean) => isDbConnected = data)
+        .catch((err: Error) => console.error(err));
+
+    console.log('server rodando na porta:', port);
+    app.listen(port);
+} catch (e: any) {
+    console.log(e);
 }
-
-
-//===================================================================
+//==================================================================//

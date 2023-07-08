@@ -10,9 +10,9 @@ const sequelize = new Sequelize('apiTSdb' , 'root' ,'qwe123asd', {
 
 
 // Synchronize the model with the database
-sequelize.sync()
-  .then(() => console.log('Models synchronized with MySQL database'))
-  .catch((error : any)=> console.error('Error synchronizing models with MySQL database', error));
+// sequelize.sync()
+//   .then(() => console.log('Models synchronized with MySQL database'))
+//   .catch((error : any)=> console.error('Error synchronizing models with MySQL database', error));
 
 
 module.exports = sequelize
