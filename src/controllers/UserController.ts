@@ -73,8 +73,8 @@ export default class UserController {
           name: name,
           description : SHAemail ,
           idUser : user_Id , 
-          photo : null,
-          links: null
+          photo : '',
+          links: ''
         };
 
         const createdClassUser = new UserClass(SHAname, SHAemail, user_Id, databasePassword, salt);
